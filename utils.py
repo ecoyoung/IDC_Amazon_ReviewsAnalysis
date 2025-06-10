@@ -70,19 +70,39 @@ def calculate_review_stats(df):
     return stats_df, review_counts, review_percentages
 
 def create_pie_chart(review_counts, title='评论类型分布'):
-    """创建饼图"""
-    fig = px.pie(
-        values=review_counts.values,
-        names=review_counts.index,
-        title=title,
-        color_discrete_map={
-            'positive': '#2ECC71',
-            'neutral': '#F1C40F',
-            'negative': '#E74C3C',
-            'unknown': '#95A5A6'
-        }
+    # 确保索引顺序与颜色映射一致
+    review_counts = review_counts.reindex(
+        ['positive', 'neutral', 'negative'], 
+        fill_value=0
     )
-    fig.update_traces(textposition='inside', textinfo='percent+label')
+    
+    # 创建数据框确保顺序
+    df = pd.DataFrame({
+        'type': review_counts.index,
+        'count': review_counts.values
+    })
+    
+    fig = px.pie(
+        df,
+        values='count',
+        names='type',
+        title=title,
+        color='type',  # 关键：通过color参数指定分组
+        color_discrete_map={
+            'positive': '#2ECC71',  # 绿色
+            'neutral': '#F1C40F',   # 黄色
+            'negative': '#E74C3C'   # 红色
+        },
+        category_orders={'type': ['positive', 'neutral', 'negative']}
+    )
+    
+    # 禁用主题干扰
+    fig.update_layout(template='none')
+    fig.update_traces(
+        textposition='inside', 
+        textinfo='percent+label',
+        marker=dict(line=dict(color='#FFFFFF', width=1))  # 添加白色边框
+    )
     return fig
 
 def analyze_by_group(df, group_by):
