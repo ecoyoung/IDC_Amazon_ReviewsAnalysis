@@ -1,3 +1,5 @@
+**简体中文** | [English](README.en.md)
+
 # Amazon评论分析工具
 这是一个用于分析Amazon产品评论的应用程序。
 开发团队：海翼IDC
